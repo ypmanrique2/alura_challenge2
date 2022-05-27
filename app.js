@@ -1,27 +1,27 @@
 ;(function() {
 'use strict'
-
+// Se declara esta variable para almacenar las palabras que el jugador debe adivinar
 var palabras = [
-    'ALURA',
-    'NIÑO',
-    'AFINIDAD',
-    'PROGRAMAR',
-    'ORACLE',
-    'YOUTUBE'
+    'ARGENTINA',
+    'BRASIL',
+    'COLOMBIA',
+    'CHILE',
+    'ECUADOR',
+    'MEXICO',
+    'PERU',
+    'VENEZUELA',
 ]
-
-// Variable para almacenar la configuración actual
+// Se declara esta variable para almacenar la configuración actual del juego 
 var juego = null
-// Para ver si ya se ha enviado alguna alerta
+// Se declara esta variable para ver si ya se ha enviado alguna alerta de resultado
 var finalizado = false
-
-
+// Se modifica HTML del DOM con el operador $ para poder interactuar con los elementos 
 var $html = {
     hombre: document.getElementById('hombre'),
     adivinado: document.querySelector('.adivinado'),
     errado: document.querySelector('.errado',)
 }
-
+// Se declara la función dibujar para que muestre los estados del juego en imágenes 
 function dibujar(juego) {
     // Actualizar la imagen del hombre
     var $elem
@@ -107,11 +107,11 @@ window.onkeypress = function adivinarLetra(e) {
         return
     }
     adivinar(juego, letra)
-    var estado = juego.estado
-    if (estado === 8 && !finalizado) {
+    var status = juego.status
+    if (status === 8 && !finalizado) {
         setTimeout(alertaGanado, 0)
         finalizado = true
-    }else if (estado === 1 && !finalizado) {
+    }else if (status === 1 && !finalizado) {
         let palabra = juego.palabra
         let fn = alertaPerdido.bind(undefined, palabra) 
         setTimeout(fn, 0)
