@@ -1,12 +1,21 @@
 ;(function() {
 'use strict'
 
-var juego = {
-    palabra: "ALURA",
-    status: 1,
-    adivinado: ['A', 'L'],
-    errado: ['B', 'J', 'K', 'C']
-}
+var palabras = [
+    'ALURA',
+    'NIÑO',
+    'AFINIDAD',
+    'PROGRAMAR',
+    'ORACLE',
+    'YOUTUBE'
+]
+
+
+// Variable para almacenar la configuración actual
+var juego = null
+// Para ver si ya se ha enviado alguna alerta
+var finalizado = false
+
 
 var $html = {
     hombre: document.getElementById('hombre'),
@@ -53,7 +62,6 @@ function dibujar(juego) {
         $span.setAttribute('class', 'letra errada')
         $span.appendChild($txt)
         $elem.appendChild($span)
-        
     }
 }
 
@@ -105,9 +113,47 @@ window.onkeypress = function adivinarLetra(e) {
         return
     }
     adivinar(juego, letra)
+    var estado = juego.estado
+    if (estado === 8 && !finalizado) {
+        setTimeout(alertaGanado, 500)
+        finalizado = true
+    }else if (estado === 1 && !finalizado) {
+        let palabra = juego.palabra
+        let fn = alertaPerdido.bind(undefined, palabra) 
+        setTimeout(fn, 500)
+        finalizado = true
+    }
     dibujar(juego)
 }
 
-dibujar(juego)
+
+window.nuevoJuego = function nuevoJuego() {
+    var palabra = palabraAleatoria()
+    juego = {}
+    juego.palabra = palabra
+    juego.status = 7
+    juego.adivinado = []
+    juego.errado = []
+    finalizado = false
+    dibujar(juego)
+    console.log(juego)
+}
+
+
+function palabraAleatoria() {
+    var indice = ~~(Math.random() * palabras.length)
+    return palabras[indice]
+}
+
+function alertaGanado() {
+    alert('Felicidades, ganaste!')
+}
+
+function alertaPerdido(palabra) {
+    alert('Lo siento, perdiste... la palabra era: ' + palabra)
+}
+
+nuevoJuego()
+
 
 }())
