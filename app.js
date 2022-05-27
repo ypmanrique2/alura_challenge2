@@ -10,7 +10,6 @@ var palabras = [
     'YOUTUBE'
 ]
 
-
 // Variable para almacenar la configuración actual
 var juego = null
 // Para ver si ya se ha enviado alguna alerta
@@ -43,7 +42,7 @@ function dibujar(juego) {
     for (let letra of palabra) {
         let $span = document.createElement('span')
         let $txt = document.createTextNode('')
-        if (adivinado.indexOf(letra) >= 0) {
+        if (adivinado.has(letra)) {
             $txt.nodeValue = letra
         }
         $span.setAttribute('class', 'letra adivinada')
@@ -75,34 +74,29 @@ function adivinar(juego, letra) {
     var adivinado = juego.adivinado
     var errado = juego.errado
     // Si ya hemos adivinado o errado la letra, no hay que hacer nada 
-    if (adivinado.indexOf(letra) >= 0 || 
-        errado.indexOf(letra) >= 0) {
+    if (adivinado.has(letra) || errado.has(letra)) {
         return
     }
 
     var palabra = juego.palabra
+    var letras = juego.letras
     // Si es letra de la palabra, 
-    if (palabra.indexOf(letra) >= 0) {
-        let ganado = true
-        // Debemos ver si llegamos al estado ganador 
-        for (let l of palabra) {
-            if (adivinado.indexOf(l) < 0 && l != letra) {
-                ganado = false
-                juego.previo = juego.status
-                break
-            }
-        }
+    if (letras.has(letra)) {
+        // Agregamos a la lista de letras adivinadas
+        adivinado.add(letra)
+        // Actualizamos las letras restantes
+        juego.restante--
+
         // Si ya se ha ganado, debemos indicarlo 
-        if (ganado) {
-            juego.status = 8
+        if (juego.restante === 0) {
+        juego.previo = juego.status
+        juego.status = 8
         }
-        // Agregamos la letra, a la lista de letras adivinadas
-        adivinado.push(letra)
     } else {
         // Si no es letra de la palabra, acercamos al hombre un paso más de su horca
         juego.status--
         // Agregamos la letra, a la lista de letras erradas
-        errado.push(letra)
+        errado.add(letra)
     }
 }
 
@@ -115,12 +109,12 @@ window.onkeypress = function adivinarLetra(e) {
     adivinar(juego, letra)
     var estado = juego.estado
     if (estado === 8 && !finalizado) {
-        setTimeout(alertaGanado, 500)
+        setTimeout(alertaGanado, 0)
         finalizado = true
     }else if (estado === 1 && !finalizado) {
         let palabra = juego.palabra
         let fn = alertaPerdido.bind(undefined, palabra) 
-        setTimeout(fn, 500)
+        setTimeout(fn, 0)
         finalizado = true
     }
     dibujar(juego)
@@ -132,9 +126,17 @@ window.nuevoJuego = function nuevoJuego() {
     juego = {}
     juego.palabra = palabra
     juego.status = 7
-    juego.adivinado = []
-    juego.errado = []
+    juego.adivinado = new Set()
+    juego.errado = new Set()
     finalizado = false
+
+    var letras = new Set()
+    for (let letra of palabra) {
+        letras.add(letra)
+    }
+    juego.letras = letras
+    juego.restante = letras.size
+
     dibujar(juego)
     console.log(juego)
 }
