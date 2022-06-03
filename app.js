@@ -23,22 +23,23 @@ var $html = {
 }
 // Se declara la función dibujar para que muestre los estados del juego en imágenes 
 function dibujar(juego) {
-    // Actualizar la imagen del hombre
+    // Se declara la variable $elem para manipular el HTML del DOM y actualizar la imagen del hombre
     var $elem
     $elem = $html.hombre
-    
+    // Se declara la variable status para controlar la configuración del juego 
     var status  = juego.status
     if (status === 8) {
         status = juego.previo
     }
+    // Se muestran las imágenes según el estado en que vaya azanzando el juego
     $elem.src = './img/status/0' + status + '.svg'
-
-    // Creamos las letras adivinadas
+    // Se crean las variables para almacenar las letras ingresadas y las letras adivinadas
     var palabra = juego.palabra
     var adivinado = juego.adivinado
     $elem = $html.adivinado
-    // Borramos los elementos anteriores
+    // Se borran los elementos anteriores
     $elem.innerHTML = ''
+    // Se hace un ciclo for para buscar si la letra pertenece a la palabra seleccionada
     for (let letra of palabra) {
         let $span = document.createElement('span')
         let $txt = document.createTextNode('')
@@ -49,12 +50,12 @@ function dibujar(juego) {
         $span.appendChild($txt)
         $elem.appendChild($span)
     }
-
-    // Creamos las letras erradas
+    // Se crean las letras erradas
     var errado = juego.errado
     $elem = $html.errado
-    // Borramos los elementos anteriores
+    // Se borran los elementos anteriores
     $elem.innerHTML = ''
+     // Se hace un ciclo for para buscar si la letra no pertenece a la palabra seleccionada
     for (let letra of errado) {
         let $span = document.createElement('span')
         let $txt = document.createTextNode(letra)
@@ -73,33 +74,33 @@ function adivinar(juego, letra) {
 
     var adivinado = juego.adivinado
     var errado = juego.errado
-    // Si ya hemos adivinado o errado la letra, no hay que hacer nada 
+    // Si ya se ha adivinado o errado la letra, no hay que hacer nada 
     if (adivinado.has(letra) || errado.has(letra)) {
         return
     }
 
     var palabra = juego.palabra
     var letras = juego.letras
-    // Si es letra de la palabra, 
+    // Si es letra de la palabra, entonces...
     if (letras.has(letra)) {
-        // Agregamos a la lista de letras adivinadas
+        // Se añade a la lista de letras adivinadas
         adivinado.add(letra)
-        // Actualizamos las letras restantes
+        // ASe actualizan las letras restantes
         juego.restante--
 
-        // Si ya se ha ganado, debemos indicarlo 
+        // Si ya se ha ganado, se debe indicar
         if (juego.restante === 0) {
         juego.previo = juego.status
         juego.status = 8
         }
     } else {
-        // Si no es letra de la palabra, acercamos al hombre un paso más de su horca
+        // Si no es letra de la palabra, se acerca el muñeno un paso más a su ahorcamiento
         juego.status--
-        // Agregamos la letra, a la lista de letras erradas
+        // Se añade la letra, a la lista de letras erradas
         errado.add(letra)
     }
 }
-
+// Para ingresar letras con el teclado en mayúsculas
 window.onkeypress = function adivinarLetra(e) {
     var letra = e.key
     letra = letra.toUpperCase()
@@ -120,7 +121,7 @@ window.onkeypress = function adivinarLetra(e) {
     dibujar(juego)
 }
 
-
+// Para configurar la lógica del juego
 window.nuevoJuego = function nuevoJuego() {
     var palabra = palabraAleatoria()
     juego = {}
@@ -141,16 +142,16 @@ window.nuevoJuego = function nuevoJuego() {
     console.log(juego)
 }
 
-
+// Para elegir una palabra aleatoriamente
 function palabraAleatoria() {
     var indice = ~~(Math.random() * palabras.length)
     return palabras[indice]
 }
-
+// Para alertar si ganó
 function alertaGanado() {
     alert('Felicidades, ganaste!')
 }
-
+// Para alertar si perdió
 function alertaPerdido(palabra) {
     alert('Lo siento, perdiste... la palabra era: ' + palabra)
 }
